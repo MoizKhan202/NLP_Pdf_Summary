@@ -5,10 +5,10 @@ from transformers import pipeline
 # Function to load and cache the summarization model
 @st.cache_resource
 def load_summarization_pipeline():
-    return pipeline("summarization", model="facebook/bart-large-cnn")
+    return pipeline("summarization", model="t5-small", tokenizer="t5-small")
 
 # Function to preprocess and chunk text
-def preprocess_text(text, max_chunk_size=1024):
+def preprocess_text(text, max_chunk_size=512):
     sentences = text.split(". ")
     chunks = []
     current_chunk = []
@@ -28,8 +28,8 @@ def preprocess_text(text, max_chunk_size=1024):
     return chunks
 
 # Streamlit UI
-st.title("PDF Summarization App")
-st.write("Upload a PDF file to generate its summary!")
+st.title("Fast PDF Summarization App")
+st.write("Upload a PDF file to generate a concise summary (200–300 words)!")
 
 uploaded_file = st.file_uploader("Upload your PDF file", type=["pdf"])
 
@@ -54,12 +54,11 @@ if uploaded_file is not None:
 
         # Generate summary for each chunk
         with st.spinner("Generating summary..."):
-            summaries = [summarization_pipeline(chunk)[0]["summary_text"] for chunk in chunks]
-        full_summary = " ".join(summaries)
+            summaries = summarization_pipeline(" ".join(chunks), max_length=300, min_length=200, truncation=True)
 
         # Display the summary
         st.subheader("Summary:")
-        st.write(full_summary)
+        st.write(summaries[0]["summary_text"])
     else:
         st.error("No text could be extracted from the PDF. Please upload a valid PDF.")
 else:
