@@ -28,7 +28,7 @@ def preprocess_text(text, max_chunk_size=512):
     return chunks
 
 # Streamlit UI
-st.title("Fast PDF Summarization App")
+st.title("MHU PDF Summarization App")
 st.write("Upload a PDF file to generate a concise summary (200–300 words)!")
 
 uploaded_file = st.file_uploader("Upload your PDF file", type=["pdf"])
